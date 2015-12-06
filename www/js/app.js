@@ -58,6 +58,7 @@ angular.module('starter', ['ionic','ngCordova'])
         };
         $cordovaCamera.getPicture(options).then(function (imageData) {
             myService.foto=imageData;
+            $scope.fotos=imageData;
             $scope.imgURI = "data:image/jpeg;base64," + imageData;
         }, function (err) {
             // An error occured. Show a message to the user
@@ -98,12 +99,13 @@ angular.module('starter', ['ionic','ngCordova'])
           myService.latitud = position.coords.latitude;
           myService.longitud = position.coords.longitude;
           myService.altura = position.coords.altitude;
-          myService.velocidad = position.coords.speed;
+          
 
          // alert(lat + " --- " + long + "----" + alt);
           $scope.lati=myService.latitud;
           $scope.longi=myService.longitud;
           $scope.alti=myService.altura;
+          
 
       },function(err) {
         // error
@@ -111,7 +113,35 @@ angular.module('starter', ['ionic','ngCordova'])
     );
 })
 
-.controller('envia',function($scope,$http,$cordovaGeolocation,myService){
+.controller('envia',function($scope,$cordovaDeviceOrientation,$http,$cordovaGeolocation,myService,$cordovaDeviceMotion){
+
+document.addEventListener("deviceready", function () {
+
+    $cordovaDeviceOrientation.getCurrentHeading().then(function(result) {
+       myService.orientacion = result.magneticHeading;
+       
+    }, function(err) {
+      // An error occurred
+    })
+  });
+
+
+ document.addEventListener("deviceready", function () {
+
+    $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
+      var X = result.x;
+      var Y = result.y;
+      var Z = result.z;
+      
+      myService.velocidad=X+Y+Z;
+      
+    }, function(err) {
+      // An error occurred. Show a message to the user
+    });
+
+  }, false);
+
+
 
     $scope.enviarDatos=function(){
         console.log(typeof myService.latitud);
@@ -120,10 +150,10 @@ angular.module('starter', ['ionic','ngCordova'])
             latitud: myService.latitud,
             longitud: myService.longitud,
             altura: myService.altura,
-            orientacion: "orientacion",
+            orientacion: myService.orientacion,
             velocidad: myService.velocidad,
             imei: myService.imei,
-            phone:"phone",
+            number_phone:"phone",
             mensaje:"Mesaje de ayuda",
         };
         // objeto = {
@@ -139,7 +169,7 @@ angular.module('starter', ['ionic','ngCordova'])
         // };
 
         //var url="http://190.11.74.178:8000/appmobile/services/?photo="+encodeURIComponent(foto)
-        var url="http://hades.scesi.org:8000/appmobile/services/?photo="+encodeURIComponent(objeto.foto)
+        var url="http://190.11.70.92:8000/appmobile/services/?photo="+encodeURIComponent(objeto.foto)
             url+='&'+'latitude='+encodeURIComponent(objeto.latitud)
             url+='&'+'longitude='+encodeURIComponent(objeto.longitud)
             url+='&'+'altitude='+encodeURIComponent(objeto.altura)
