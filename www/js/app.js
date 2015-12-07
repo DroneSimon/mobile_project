@@ -26,6 +26,7 @@ angular.module('starter', ['ionic','ngCordova'])
         velocidad: "",
         imei:"",
         phone:"",
+        mensaje:"",
     };
     return objeto;
 })
@@ -82,6 +83,7 @@ angular.module('starter', ['ionic','ngCordova'])
 })
 .controller('GeolocationCtrl', function($scope, $cordovaGeolocation,myService) {
     var posOptions = {timeout: 10000, enableHighAccuracy: false};
+    $scope.mensaje_denuncia = "";
     $cordovaGeolocation
       .getCurrentPosition(posOptions)
       .then(function (position) {
@@ -117,6 +119,7 @@ angular.module('starter', ['ionic','ngCordova'])
         });
     }, false);
     $scope.enviarDatos=function(){
+        myService.mensaje = $scope.mensaje_denuncia;
         console.log(typeof myService.latitud);
         objeto = {
             foto: myService.foto,
@@ -127,7 +130,7 @@ angular.module('starter', ['ionic','ngCordova'])
             velocidad: myService.velocidad,
             imei: myService.imei,
             number_phone:"phone",
-            mensaje:"Mesaje de ayuda",
+            mensaje: myService.mensaje ,
         };
         // objeto = {
         //     foto: "Foto",
@@ -160,3 +163,28 @@ angular.module('starter', ['ionic','ngCordova'])
             });
     }
 })
+.config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
+        .state('tab', {
+            url: '/tab',
+            abstract: true,
+            templateUrl: 'templates/tabs.html'
+        })
+    .state('tab.chats', {
+        url: '/chats',
+        views: {
+            'tab-chats': {
+                templateUrl: 'templates/tab-chats.html',
+            }
+        }
+    })
+    .state('tab.dash', {
+        url: '/dash',
+        views: {
+            'tab-dash': {
+                templateUrl: 'templates/tab-dash.html',
+            }
+        }
+    });
+    $urlRouterProvider.otherwise('/tab/dash');
+});

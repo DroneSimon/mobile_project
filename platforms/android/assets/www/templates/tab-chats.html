@@ -1,0 +1,36 @@
+<ion-view view-title="SACAR FOTOGRAFIA">
+  <ion-content>
+    <ion-list>
+    <div class="item item-text-wrap"  ng-controller="DeviceController">
+    </div>
+    <div class="item item-text-wrap" ng-controller="ExampleController">
+    </div>
+    <div class="item item-text-wrap"  ng-controller="GeolocationCtrl">
+    </div>
+
+      <div class="list card">
+        <div class="item">
+          <button class="button icon-left ion-camera button-assertive">
+            Tomar Foto
+          </button>
+          <button class="button icon-left ion-images button-positive">
+            Buscar Foto
+          </button>
+        </div>
+      </div>
+      <div class="list card">
+        <div class="item2">
+          <label class="item item-input">
+            <span class="input-label"></span>
+              <input type="text" placeholder="Escriba su denuncia">
+          </label>
+        </div>
+      </div>
+      <div class="list card" ng-controller="envia">
+         <div class="item3">
+          <button class="button icon-left ion-android-share button-positive" ng-controller="envia" ng-click="enviarDatos()">Enviar</button>
+         </div>
+      </div>   
+    </ion-list>
+  </ion-content>
+</ion-view>

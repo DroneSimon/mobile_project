@@ -1,10 +1,9 @@
-// Ionic Starter App
 
+// Ionic Starter App
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic','ngCordova'])
-
 .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -17,7 +16,6 @@ angular.module('starter', ['ionic','ngCordova'])
         }
     });
 })
-
 .factory('myService',function(){
     objeto = {
         foto: "",
@@ -34,8 +32,6 @@ angular.module('starter', ['ionic','ngCordova'])
 .controller('DeviceController', function($ionicPlatform, $scope, $cordovaDevice, myService) {
     $ionicPlatform.ready(function() {
         $scope.$apply(function() {
-            // sometimes binding does not work! :/
-            // getting device infor from $cordovaDevice
             var device = $cordovaDevice.getDevice();
             myService.imei = device.uuid;
             $scope.uuid = device.uuid;
@@ -43,7 +39,6 @@ angular.module('starter', ['ionic','ngCordova'])
     });
 })
 .controller("ExampleController", function ($scope, $cordovaCamera, myService) {
-
     $scope.takePhoto = function () {
         var options = {
             quality: 75,
@@ -76,21 +71,15 @@ angular.module('starter', ['ionic','ngCordova'])
             popoverOptions: CameraPopoverOptions,
             saveToPhotoAlbum: true
         };
-
         $cordovaCamera.getPicture(options).then(function (imageData) {
             $scope.base="data:image/base64;base64,";
             $scope.imgURI = "data:image/jpeg;base64," + imageData;
-
-
             var foto='dsfasdfjsjdfjasdjf';
-
-
         }, function (err) {
             // An error occured. Show a message to the user
         });
     }
 })
-
 .controller('GeolocationCtrl', function($scope, $cordovaGeolocation,myService) {
     var posOptions = {timeout: 10000, enableHighAccuracy: false};
     $cordovaGeolocation
@@ -99,14 +88,9 @@ angular.module('starter', ['ionic','ngCordova'])
           myService.latitud = position.coords.latitude;
           myService.longitud = position.coords.longitude;
           myService.altura = position.coords.altitude;
-          
-
-         // alert(lat + " --- " + long + "----" + alt);
           $scope.lati=myService.latitud;
           $scope.longi=myService.longitud;
           $scope.alti=myService.altura;
-          
-
       },function(err) {
         // error
     }
@@ -114,35 +98,24 @@ angular.module('starter', ['ionic','ngCordova'])
 })
 
 .controller('envia',function($scope,$cordovaDeviceOrientation,$http,$cordovaGeolocation,myService,$cordovaDeviceMotion){
-
-document.addEventListener("deviceready", function () {
-
-    $cordovaDeviceOrientation.getCurrentHeading().then(function(result) {
-       myService.orientacion = result.magneticHeading;
-       
-    }, function(err) {
-      // An error occurred
-    })
-  });
-
-
- document.addEventListener("deviceready", function () {
-
-    $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
-      var X = result.x;
-      var Y = result.y;
-      var Z = result.z;
-      
-      myService.velocidad=X+Y+Z;
-      
-    }, function(err) {
-      // An error occurred. Show a message to the user
+    document.addEventListener("deviceready", function () {
+        $cordovaDeviceOrientation.getCurrentHeading().then(function(result) {
+            myService.orientacion = result.magneticHeading;
+            alert(myService.orientacion);
+        }, function(err) {
+            // An error occurred
+        })
     });
-
-  }, false);
-
-
-
+    document.addEventListener("deviceready", function () {
+        $cordovaDeviceMotion.getCurrentAcceleration().then(function(result) {
+            var X = result.x;
+            var Y = result.y;
+            var Z = result.z;
+            myService.velocidad=X+Y+Z;
+        }, function(err) {
+            // An error occurred. Show a message to the user
+        });
+    }, false);
     $scope.enviarDatos=function(){
         console.log(typeof myService.latitud);
         objeto = {
@@ -167,9 +140,7 @@ document.addEventListener("deviceready", function () {
         //     number_phone:"phone",
         //     mensaje:"Mesaje de ayuda",
         // };
-
-        //var url="http://190.11.74.178:8000/appmobile/services/?photo="+encodeURIComponent(foto)
-        var url="http://190.11.70.92:8000/appmobile/services/?photo="+encodeURIComponent(objeto.foto)
+        var url="http://190.11.71.71:8000/appmobile/services/?photo="+encodeURIComponent(objeto.foto)
             url+='&'+'latitude='+encodeURIComponent(objeto.latitud)
             url+='&'+'longitude='+encodeURIComponent(objeto.longitud)
             url+='&'+'altitude='+encodeURIComponent(objeto.altura)
@@ -178,9 +149,6 @@ document.addEventListener("deviceready", function () {
             url+='&'+'imei='+encodeURIComponent(objeto.imei)
             url+='&'+'number_phone='+encodeURIComponent(objeto.number_phone)
             url+='&'+'message='+encodeURIComponent(objeto.mensaje);
-
-        //$http.get('http://192.168.0.100:8000/appmobile/services/?photo="22asdf22"&latitude=12324.23423&longitude=123.2123&altitude=123.2342&orientation=234.234&speed=34.343&imei=1231231233453434&number=76453423')
-        console.log(url);
         $http.get(url)
             .then(function(data,error){
                 window.tes=data;
@@ -188,72 +156,32 @@ document.addEventListener("deviceready", function () {
                 alert(error);
                 $scope.days=data.data;
             }, function(err) {
-                console.log("Existe un Error");
-                console.log(myService);
-                alert('Un Error Ocurrido');
+                alert(url);
             });
-
     }
-
 })
-//position.coords.altitude
-
-.controller('acelerometro',function($scope,$cordovaAcelerometro){
-    var watchID = null;
-
-          // Wait for Cordova to load
-          //
-          document.addEventListener("deviceready", onDeviceReady, false);
-
-          // Cordova is ready
-          //
-          function onDeviceReady() {
-              startWatch();
-          }
-
-          // Start watching the acceleration
-          //
-          function startWatch() {
-
-              // Update acceleration every 3 seconds
-              var options = { frequency: 2000 };
-
-              watchID = navigator.accelerometer.watchAcceleration(onSuccess, onError, options);
-          }
-
-          // Stop watching the acceleration
-          //
-          function stopWatch() {
-              if (watchID) {
-                  navigator.accelerometer.clearWatch(watchID);
-                  watchID = null;
-              }
-          }
-
-          // onSuccess: Get a snapshot of the current acceleration
-          //
-          function onSuccess(acceleration) {
-              var element = document.getElementById('accelerometer');
-              //element.innerHTML = 'Acceleration X: ' + acceleration.x + '<br />' +
-                //                  'Acceleration Y: ' + acceleration.y + '<br />' +
-                //                  'Acceleration Z: ' + acceleration.z + '<br />' + 
-                //                  'Timestamp: '      + acceleration.timestamp + '<br />';
-
-                var acex = navigator.accelerometer.watchAcceleration.acceleration.x
-                var acexx=acceleration.x;
-                $scope.xx=element.acceleration.x;
-                $scope.yy=element.acceleration.y;
-                $scope.zz=element.acceleration.zz;
-                $scope.tt=element.acceleration.timestamp;
-                $scope.abc=acceleration.x;
-                $scope.abcd=acex;
-                $scope.abcde=acexx;
-          }
-
-          // onError: Failed to get the acceleration
-          //
-          function onError() {
-              alert('onError!');
-          }
-}
-)
+.config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
+        .state('tab', {
+            url: '/tab',
+            abstract: true,
+            templateUrl: 'templates/tabs.html'
+        })
+    .state('tab.chats', {
+        url: '/chats',
+        views: {
+            'tab-chats': {
+                templateUrl: 'templates/tab-chats.html',
+            }
+        }
+    })
+    .state('tab.dash', {
+        url: '/dash',
+        views: {
+            'tab-dash': {
+                templateUrl: 'templates/tab-dash.html',
+            }
+        }
+    });
+    $urlRouterProvider.otherwise('/tab/dash');
+});
